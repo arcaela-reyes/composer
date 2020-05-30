@@ -1,0 +1,38 @@
+{
+    "name": "arcaela/php",
+    "description": "Herramientas para el desarrollo de aplicaciones utilizando Laravel como Framework",
+    "type": "library",
+    "version": "2.0.5",
+    "license": "ISC",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Alejandro Reyes",
+            "email": "arcaela12@gmail.com"
+        }
+    ],
+    "require": {
+        "beyondcode/laravel-websockets": "^1.3",
+        "pusher/pusher-php-server": "^3.0"
+    },
+    "autoload": {
+        "files": [
+            "src/Helper/miscellaneous.php"
+        ],
+        "psr-4": {
+            "Arcaela\\": "./",
+            "Arcaela\\Console\\": "./Console/",
+            "Arcaela\\Helper\\": "./Helper/",
+            "Arcaela\\Providers\\": "./Providers/",
+            "Arcaela\\Traits\\": "./Traits/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Arcaela\\Providers\\Routing",
+                "Arcaela\\Providers\\Console"
+            ]
+        }
+    }
+}
