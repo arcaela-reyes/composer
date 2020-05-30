@@ -2,7 +2,7 @@
     "name": "arcaela/php",
     "description": "Herramientas para el desarrollo de aplicaciones utilizando Laravel como Framework",
     "type": "library",
-    "version": "2.0.5",
+    "version": "2.4.5",
     "license": "ISC",
     "minimum-stability": "dev",
     "authors": [
