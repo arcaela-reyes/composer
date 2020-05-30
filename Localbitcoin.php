@@ -1,9 +1,6 @@
 <?php
 namespace Arcaela;
-use Illuminate\Support\Str;
-
-
-class LocalBitcoin extends Macroable{
+class LBTC extends Macroable{
 	use Traits\Basics;
 
 	public function Query($endPoint,$params=[]) {
