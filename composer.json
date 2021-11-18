@@ -1,38 +1,25 @@
 {
-    "name": "arcaela/php",
-    "description": "Herramientas para el desarrollo de aplicaciones utilizando Laravel como Framework",
+    "name": "arcaela/composer",
+    "description": "Algunas herramientas utiles para las aplicaciones construidas en Laravel o solo PHP",
     "type": "library",
-    "version": "2.4.5",
-    "license": "ISC",
-    "minimum-stability": "dev",
+    "require-dev": {
+    },
+    "license": "MIT",
     "authors": [
         {
             "name": "Alejandro Reyes",
             "email": "arcaela12@gmail.com"
         }
     ],
-    "require": {
-        "beyondcode/laravel-websockets": "^1.3",
-        "pusher/pusher-php-server": "^3.0"
-    },
+    "minimum-stability": "dev",
     "autoload": {
         "files": [
-            "Helper/miscellaneous.php"
+            "./functions.php"
         ],
         "psr-4": {
-            "Arcaela\\": "./",
-            "Arcaela\\Console\\": "./Console/",
-            "Arcaela\\Helper\\": "./Helper/",
-            "Arcaela\\Providers\\": "./Providers/",
-            "Arcaela\\Traits\\": "./Traits/"
+            "Arcaela\\":"./",
+            "Arcaela\\Traits\\":"./Traits/"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Arcaela\\Providers\\Routing",
-                "Arcaela\\Providers\\Console"
-            ]
-        }
-    }
+    "require": {}
 }
