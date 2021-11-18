@@ -2,13 +2,11 @@
     "name": "arcaela/composer",
     "description": "Algunas herramientas utiles para las aplicaciones construidas en Laravel o solo PHP",
     "type": "library",
-    "require-dev": {
-    },
     "license": "MIT",
     "authors": [
         {
             "name": "Alejandro Reyes",
-            "email": "arcaela12@gmail.com"
+            "email": "arcaela.reyes@gmail.com"
         }
     ],
     "minimum-stability": "dev",
