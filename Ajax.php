@@ -19,7 +19,7 @@ class Ajax {
         return $this;
     }
 
-    public static function get(string $url, $then, $catch){
+    public static function get(string $url, $then = null, $catch = null){
         return (new static)->url($url)->method("GET")->then($then, $catch);
     }
 
