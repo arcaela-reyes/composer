@@ -129,13 +129,13 @@ class Ajax {
         else $response->data = $data;
         curl_close( $handler );
         if( $response->ok ){
-            $this->trigger("success", $response);
-            if(is_callable($then)) return $then($response);
+            $this->trigger("success", $response->data, $response);
+            if(is_callable($then)) return $then($response->data, $response);
         } else {
-            $this->trigger("error", $response);
-            if(is_callable($catch)) return $catch($response);
+            $this->trigger("error", $response->message, $response);
+            if(is_callable($catch)) return $catch($response->message, $response);
         }
-        return $response;
+        return $response->data ?? null;
     }
 
 }
