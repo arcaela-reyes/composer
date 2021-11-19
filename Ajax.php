@@ -19,6 +19,14 @@ class Ajax {
         return $this;
     }
 
+    public static function get(string $url, callable $then = null, callable $catch = null){
+        return (new static)->url($url)->method("GET")->then($then, $catch);
+    }
+
+    public static function post(string $url, array $inputs = []){
+        return (new static)->url($url)->method("POST")->input($inputs);
+    }
+
     public $input=[];
     public function input(...$props){
         if( count($props) === 0) return $this->input;
