@@ -7,38 +7,6 @@ class Ajax {
 
     use EventListener;
 
-    public $header=[];
-    public function header(...$props){
-        if( count($props) === 0) return $this->header;
-        else if( count($props) === 1){
-            if( is_array( $props[0] ) )
-                $this->header = [ ...$this->header, ...$props[0] ];
-            else return $this->header[ $props[0] ];
-        }
-        else $this->header[ $props[0] ] = $props[1];
-        return $this;
-    }
-
-    public static function get(string $url, $then = null, $catch = null){
-        return (new static)->url($url)->method("GET")->then($then, $catch);
-    }
-
-    public static function post(string $url, array $inputs = []){
-        return (new static)->url($url)->method("POST")->input($inputs);
-    }
-
-    public $input=[];
-    public function input(...$props){
-        if( count($props) === 0) return $this->input;
-        else if( count($props) === 1){
-            if( is_array( $props[0] ) )
-                $this->input = [ ...$this->input, ...$props[0] ];
-            else return $this->input[ $props[0] ];
-        }
-        else $this->input[ $props[0] ] = $props[1];
-        return $this;
-    }
-
     public $url = "";
     public function url(string $url){
         $this->url = $url;
@@ -48,6 +16,32 @@ class Ajax {
     public $method = "GET";
     public function method(string $method){
         $this->method = strtoupper($method);
+        return $this;
+    }
+
+    public $header=[];
+    public function header(...$props){
+        if( count($props) === 0) return $this->header;
+        else if( count($props) === 1){
+            if( is_array( $props[0] ) )
+                $this->header = array_merge($this->header, $props[0]);
+            else return $this->header[ $props[0] ];
+        }
+        else $this->header[ $props[0] ] = $props[1];
+        return $this;
+    }
+
+    public $input=[];
+    public function input(...$props){
+        if( count($props) === 0) return $this->input;
+        else if( count($props) === 1){
+            if( is_array( $props[0] ) ){
+                if( is_array( $this->input )) $this->input = array_merge($this->input, $props[0]);
+                else  $this->input = $props[0];
+            }
+            else return $this->input[ $props[0] ];
+        }
+        else $this->input[ $props[0] ] = $props[1];
         return $this;
     }
 
@@ -73,14 +67,36 @@ class Ajax {
 
     public static function init(){ return new static; }
 
+    public static function get(string $url, $then = null, $catch = null){
+        return (new static)->url($url)->method("GET")->then($then, $catch);
+    }
+    public static function post(string $url, array $inputs = []){
+        return (new static)->url($url)->method("POST")->input($inputs);
+    }
+
+    public static function buildQuery(array $inputs = []){
+        $query_array = [];
+        foreach ($inputs as $key => $value) {
+            if (is_array($value))
+                $query_array = array_merge($query_array, array_map(function ($v) use ($key) {
+                    return urlencode($key) . '=' . urlencode($v);
+                }, $value));
+            else $query_array[] = urlencode($key) . '=' . urlencode($value);
+        }
+        return implode('&', $query_array);        
+    }
+
     public function then($then = null, $catch = null){
         $this->curl_header['CURLOPT_URL'] = $this->url;
-        $this->curl_header['CURLOPT_RETURNTRANSFER'] = true;
-        if($this->method==='POST'){
-            $this->curl_header["CURLOPT_POST"] = true;
+        if($this->method==='POST') {
+            $this->curl_header["CURLOPT_POST"] = 1;
             $this->curl_header['CURLOPT_POSTFIELDS'] = $this->input;
-        } else $this->curl_header['CURLOPT_HTTPGET'] = true;
-
+        } else {
+            $this->curl_header['CURLOPT_HTTPGET'] = 1;
+            $query_string = is_array($this->input)?static::buildQuery($this->input):$this->input;
+            $this->url .= ( substr( $this->url,-1)!=='?' && substr( $query_string, 0, 1)!=='?' ) ? '?' : '';
+            $this->curl_header['CURLOPT_URL'] = $this->url . $query_string;
+        }
         $this->trigger("before", $this);
         $handler = curl_init();
         $curl_header = [];
@@ -97,16 +113,22 @@ class Ajax {
         curl_setopt( $handler, CURLOPT_HTTPHEADER, $header );
         $data = curl_exec($handler);
         $error = curl_error($handler);
+        $httpCode = curl_getinfo($handler, CURLINFO_HTTP_CODE);
+        $contentType = curl_getinfo($handler, CURLINFO_CONTENT_TYPE);
+        if( preg_match("/\w+\/json/", $contentType) )
+            $data = JSON::decode( $data );
         $response = (Object) [
-            "data"=> $data,
-            "error"=> $error,
-            "url"=> $this->url,
-            "params"=> $this->input,
-            'statusCode' => curl_getinfo($handler, CURLINFO_HTTP_CODE),
-            'content-type' => curl_getinfo($handler, CURLINFO_CONTENT_TYPE),
+            "url"=>$this->url,
+            "body"=>$this->input,
+            "headers"=>$this->header,
+            "HTTP_CODE"=> $httpCode,
+            "CONTENT_TYPE"=> $contentType,
+            "ok"=> empty($error) && $httpCode > 100 && $httpCode < 300,
         ];
+        if( $error ) $response->message = $error;
+        else $response->data = $data;
         curl_close( $handler );
-        if( !$response->error ){
+        if( $response->ok ){
             $this->trigger("success", $response);
             if(is_callable($then)) return $then($response);
         } else {
