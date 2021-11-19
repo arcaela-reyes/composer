@@ -47,14 +47,11 @@ class LocalBitcoin {
 
     public function wallet($then=null, $catch=null){
         return $this->_query("/api/wallet-balance/")->then(function(Object $response) use($then){
-            $data = $response->data['data'] ?? [
-                'receiving_address'=>'',
-                'total'=>[
-                    'balance'=>0,
-                    'sendable'=>0,
-                ],
+            $data = [
+                "address"=> $response->data['data'] ? $response->data['data']['receiving_address'] : 'UNKANOWM',
+                "balance"=>  $response->data['data'] ? (float) $response->data['data']['total']['balance'] : 0,
+                "available"=>  $response->data['data'] ? (float) $response->data['data']['total']['sendable'] : 0,
             ];
-            $data['total']['balance'] = (float) $data['total']['balance'];
             if( is_callable( $then )) return $then( $data );
             return $data;
         },$catch);
