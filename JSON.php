@@ -14,7 +14,7 @@ namespace Arcaela;
         ):(is_string($var)?utf8_encode($var):$var);
     }
 
-	public static function encode($object=array(),$print=false,$pretty=true){
+	public static function encode($object=[],$print=false,$pretty=true){
 		$object = json_encode((Array)self::utf8($object), (!empty($pretty) ? JSON_PRETTY_PRINT : false));
 		switch ($print) {
 			case true:
