@@ -10,7 +10,6 @@
             "email": "arcaela.reyes@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
     "autoload": {
         "files": [
             "./functions.php"
