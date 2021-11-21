@@ -92,11 +92,11 @@ class Ajax {
             $this->curl_header["CURLOPT_POST"] = 1;
             $this->curl_header['CURLOPT_POSTFIELDS'] = $this->input;
         } else {
+            preg_match("/^([^?]+)(\?[^#]+)?/", $this->url, $match);
+            $url = $match[1];
+            $query = ($match[2] ?? '?') . (strlen($match[2])>1?'&':'') . (is_array($this->input)?static::buildQuery($this->input):$this->input);
+            $this->url = $url . $query;
             $this->curl_header['CURLOPT_HTTPGET'] = 1;
-            $args = explode("?", $this->url);
-            $url = $args[0];
-            $params = ($args[1] ?? '?') . (is_array($this->input)?static::buildQuery($this->input):$this->input);
-            $this->url = $url . $params;
             $this->curl_header['CURLOPT_URL'] = $this->url;
         }
         $this->trigger("before", $this);
@@ -117,7 +117,6 @@ class Ajax {
         $error = curl_error($handler);
         $httpCode = curl_getinfo($handler, CURLINFO_HTTP_CODE);
         $contentType = curl_getinfo($handler, CURLINFO_CONTENT_TYPE);
-        
         if( preg_match("/\w+\/json/", $contentType) )
             $data = JSON::decode( $data );
         $response = (Object) [
@@ -129,7 +128,6 @@ class Ajax {
             "ok"=> empty($error) && $httpCode > 100 && $httpCode < 300,
         ];
         curl_close( $handler );
-
         if( $response->ok ){
             $response->data = $data;
             $this->trigger("success", $data, $response);
