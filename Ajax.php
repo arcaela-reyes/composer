@@ -115,6 +115,7 @@ class Ajax {
         $error = curl_error($handler);
         $httpCode = curl_getinfo($handler, CURLINFO_HTTP_CODE);
         $contentType = curl_getinfo($handler, CURLINFO_CONTENT_TYPE);
+        
         if( preg_match("/\w+\/json/", $contentType) )
             $data = JSON::decode( $data );
         $response = (Object) [
@@ -125,19 +126,18 @@ class Ajax {
             "CONTENT_TYPE"=> $contentType,
             "ok"=> empty($error) && $httpCode > 100 && $httpCode < 300,
         ];
-        if( $error ) $response->message = $error;
-        else $response->data = $data;
         curl_close( $handler );
+
         if( $response->ok ){
-            $this->trigger("success", $response->data, $response);
-            if(is_callable($then)) return $then($response->data, $response);
+            $response->data = $data;
+            $this->trigger("success", $data, $response);
+            if(is_callable($then)) return $then($data, $response);
         } else {
-            $this->trigger("error", $response->message, $response);
+            $response->message = $error;
+            $this->trigger("error", $error, $response);
             if(is_callable($catch)) return $catch($response->message, $response);
         }
         return $response->data ?? null;
     }
 
 }
-
-
