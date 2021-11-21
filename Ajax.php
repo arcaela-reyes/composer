@@ -93,9 +93,11 @@ class Ajax {
             $this->curl_header['CURLOPT_POSTFIELDS'] = $this->input;
         } else {
             $this->curl_header['CURLOPT_HTTPGET'] = 1;
-            $query_string = is_array($this->input)?static::buildQuery($this->input):$this->input;
-            $this->url .= ( substr( $this->url,-1)!=='?' && substr( $query_string, 0, 1)!=='?' ) ? '?' : '';
-            $this->curl_header['CURLOPT_URL'] = $this->url . $query_string;
+            $args = explode("?", $this->url);
+            $url = $args[0];
+            $params = ($args[1] ?? '?') . (is_array($this->input)?static::buildQuery($this->input):$this->input);
+            $this->url = $url . $params;
+            $this->curl_header['CURLOPT_URL'] = $this->url;
         }
         $this->trigger("before", $this);
         $handler = curl_init();
