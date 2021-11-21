@@ -2,8 +2,9 @@
     "name": "arcaela/composer",
     "description": "Algunas herramientas utiles para las aplicaciones construidas en Laravel o solo PHP",
     "type": "library",
-    "version": "2.4.2",
+    "version": "2.5.0",
     "license": "MIT",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Alejandro Reyes",
