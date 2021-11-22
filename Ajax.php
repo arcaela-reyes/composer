@@ -94,7 +94,7 @@ class Ajax {
         } else {
             preg_match("/^([^?]+)(\?[^#]+)?/", $this->url, $match);
             $url = $match[1];
-            $query = ($match[2] ?? '?') . (strlen($match[2])>1?'&':'') . (is_array($this->input)?static::buildQuery($this->input):$this->input);
+            $query = '?' . ($match[2] ?? '') . '&' . (is_array($this->input)?static::buildQuery($this->input):$this->input);
             $this->url = $url . $query;
             $this->curl_header['CURLOPT_HTTPGET'] = 1;
             $this->curl_header['CURLOPT_URL'] = $this->url;
