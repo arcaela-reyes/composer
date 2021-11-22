@@ -96,6 +96,7 @@ class Ajax {
             $query = (is_array($this->input)?static::buildQuery($this->input):$this->input);
             if(isset($match[2])&&strlen($match[2])>1)
                 $query = $match[2].(strlen($query)>0?'&':'').$query;
+            else if(strlen($query)>0) $query = '?' . $query;
             $this->url = $match[1] . $query;
             $this->curl_header['CURLOPT_HTTPGET'] = 1;
             $this->curl_header['CURLOPT_URL'] = $this->url;
