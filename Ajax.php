@@ -98,7 +98,7 @@ class Ajax {
             $query = count($match)>2 ? (
                 strlen($match[2])>1 ? $match[2] . "&${query}" : $query
             ) : $query;
-            $this->url = $url . $query;
+            $this->url = $url . (strlen($query) ? "?${query}" : '');
             $this->curl_header['CURLOPT_HTTPGET'] = 1;
             $this->curl_header['CURLOPT_URL'] = $this->url;
         }

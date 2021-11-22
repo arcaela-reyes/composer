@@ -2,7 +2,7 @@
     "name": "arcaela/composer",
     "description": "Algunas herramientas utiles para las aplicaciones construidas en Laravel o solo PHP",
     "type": "library",
-    "version": "2.6.6",
+    "version": "2.6.7",
     "license": "MIT",
     "minimum-stability": "stable",
     "authors": [
