@@ -93,9 +93,9 @@ class Ajax {
             $this->curl_header['CURLOPT_POSTFIELDS'] = $this->input;
         } else {
             preg_match("/^([^?]+)(\?[^#]+)?/", $this->url, $match);
-            if(isset($match[2])&&strlen($match[2])>1){
-                $query = $match[2] . '&' . (is_array($this->input)?static::buildQuery($this->input):$this->input);
-            } else $query = '?' . (is_array($this->input)?static::buildQuery($this->input):$this->input);
+            $query = (is_array($this->input)?static::buildQuery($this->input):$this->input);
+            if(isset($match[2])&&strlen($match[2])>1)
+                $query = $match[2].(strlen($query)>0?'&':'').$query;
             $this->url = $match[1] . $query;
             $this->curl_header['CURLOPT_HTTPGET'] = 1;
             $this->curl_header['CURLOPT_URL'] = $this->url;
